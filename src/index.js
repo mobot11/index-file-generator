@@ -26,8 +26,16 @@ const getDirectoryContent = dirPath => lstat(dirPath, false)
     .then((stat) => {
         if (stat.isDirectory()) {
             readdir(dirPath)
-                .then((content) => {
-                    console.log(content);
+                .then((dirContent) => {
+                    if (!Array.isArray(dirContent) || !dirContent.length) {
+                        // If directory contents is empty
+                        console.warn(warning(`The directory ${directory} is empty`));
+                    } else {
+                        let indexFileContents = '';
+                        dirContent.map((item) => {
+                            
+                        });
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
@@ -45,7 +53,9 @@ const getDirectoryContent = dirPath => lstat(dirPath, false)
                     } is invalid, this most likely means the directory ${directory} does not exist`,
                 ),
             );
+        } else {
+            console.log(err);
         }
     });
 
-getDirectoryContent(appRoot, rootPath);
+getDirectoryContent(rootPath);

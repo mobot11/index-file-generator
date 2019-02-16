@@ -6,6 +6,7 @@
     "repository": "https://github.com/mobot11/index-file-generator",
     "scripts": {
         "build": "NODE_ENV=production babel src --out-dir lib",
+        "build:watch": "NODE_ENV=production babel src --out-dir lib --watch",
         "test": "jest",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch"
