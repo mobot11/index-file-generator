@@ -8,12 +8,12 @@ For example importing a module from a library with the following directory struc
 
 ```bash
 my-cool-project
-    +-- src
-            module
-                module_1
-                    +-- foo.js
-                module_2
-                    +-- bar.js
+    src
+        module
+            module_1
+                foo.js
+            module_2
+                bar.js
 ```
 
 would look like
@@ -27,12 +27,12 @@ However, if we generate an index file in the `module` directory
 ```bash
 my-cool-project
     src
-        module
-            module_1
-                +-- foo.js
-            module_2
-                +-- bar.js
-            index.js
+    module
+        module_1
+            foo.js
+        module_2
+            bar.js
+        index.js
 ```
 
 and create the following index file
