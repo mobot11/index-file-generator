@@ -2,60 +2,37 @@
 
 import path from 'path';
 import fs from 'fs';
-import chalk from 'chalk';
 import arg from 'arg';
 import { promisify } from 'util';
 import appRoot from 'app-root-path';
 
+import {
+    isDirectory,
+} from './utils';
+
 const lstat = promisify(fs.lstat);
 const readdir = promisify(fs.readdir);
 
-const warning = message => chalk`{yellow WARNING:} ${message}`;
-const info = message => chalk`{magenta INFO:} ${message}`;
-const error = message => chalk`{red ERROR:} ${message}`;
-
 const args = arg({
     '--directory': String,
+    '--generate-single': Boolean,
+    '--generate-multiple': Boolean,
+    '--ignore-path': String,
+    '--include-path': String,
+    '--recursive': Boolean,
 });
 
 const directory = args['--directory'];
 
-const rootPath = path.join(appRoot.path, directory);
+async function getDirectoryContent(dirPath) {
+    const isDir = await isDirectory(dirpath);
 
-const getDirectoryContent = dirPath => lstat(dirPath, false)
-    .then((stat) => {
-        if (stat.isDirectory()) {
-            readdir(dirPath)
-                .then((dirContent) => {
-                    if (!Array.isArray(dirContent) || !dirContent.length) {
-                        // If directory contents is empty
-                        console.warn(warning(`The directory ${directory} is empty`));
-                    } else {
-                        let indexFileContents = '';
-                        dirContent.map((item) => {
-                            
-                        });
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            console.log('no content');
-        }
-    })
-    .catch((err) => {
-        if (err.code === 'ENOENT') {
-            console.error(
-                error(
-                    `The path ${
-                        err.path
-                    } is invalid, this most likely means the directory ${directory} does not exist`,
-                ),
-            );
-        } else {
-            console.log(err);
-        }
-    });
+    console.log(isDir);
+}
 
-getDirectoryContent(rootPath);
+const generateIndexFiles = (dir, root) => {
+    const dirPath = path.join(root.path, dir);
+    getDirectoryContent(dirPath);
+};
+
+generateIndexFiles(directory, appRoot);
