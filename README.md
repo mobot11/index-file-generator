@@ -5,6 +5,8 @@
 By default, [Node.js will look for a index.js file](https://nodejs.org/api/modules.html#modules_folders_as_modules) in a folder to try to find exported modules. This can be handy as projects get more complex and your library's exports become more verbose and deeply nested.
 
 For example importing a module from a library with the following directory structure...
+
+```bash
 .my-cool-project
     +-- _src
     |       _module
@@ -12,6 +14,7 @@ For example importing a module from a library with the following directory struc
                     +-- foo.js
     |           _module_2
                     +-- bar.js
+```
 
 would look like
 
@@ -21,6 +24,7 @@ would look like
 
 However, if we generate an index file in the `module` directory
 
+```bash
 .my-cool-project
     +-- _src
     |       _module
@@ -29,6 +33,7 @@ However, if we generate an index file in the `module` directory
     |           _module_2
                     +-- bar.js
             +== index.js
+```
 
 and create the following index file
 
