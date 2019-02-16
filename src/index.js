@@ -4,17 +4,48 @@ import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import arg from 'arg';
+import { promisify } from 'util';
+import appRoot from 'app-root-path';
+
+const lstat = promisify(fs.lstat);
+const readdir = promisify(fs.readdir);
 
 const warning = message => chalk`{yellow WARNING:} ${message}`;
 const info = message => chalk`{magenta INFO:} ${message}`;
 const error = message => chalk`{red ERROR:} ${message}`;
 
 const args = arg({
-    '--help': Boolean,
-    '--entry': String,
-    '--recursive': Boolean,
-    '--ignore': String,
-    '--include': String,
+    '--directory': String,
 });
 
-console.log(args);
+const directory = args['--directory'];
+
+const rootPath = path.join(appRoot.path, directory);
+
+const getDirectoryContent = dirPath => lstat(dirPath, false)
+    .then((stat) => {
+        if (stat.isDirectory()) {
+            readdir(dirPath)
+                .then((content) => {
+                    console.log(content);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            console.log('no content');
+        }
+    })
+    .catch((err) => {
+        if (err.code === 'ENOENT') {
+            console.error(
+                error(
+                    `The path ${
+                        err.path
+                    } is invalid, this most likely means the directory ${directory} does not exist`,
+                ),
+            );
+        }
+    });
+
+getDirectoryContent(appRoot, rootPath);
