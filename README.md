@@ -7,12 +7,12 @@ By default, [Node.js will look for a index.js file](https://nodejs.org/api/modul
 For example importing a module from a library with the following directory structure...
 
 ```bash
-.my-cool-project
-    +-- _src
-    |       _module
-                _module_1
+my-cool-project
+    +-- src
+    |       module
+                module_1
                     +-- foo.js
-    |           _module_2
+    |           module_2
                     +-- bar.js
 ```
 
@@ -25,12 +25,12 @@ would look like
 However, if we generate an index file in the `module` directory
 
 ```bash
-.my-cool-project
-    +-- _src
-    |       _module
-                _module_1
+my-cool-project
+    +-- src
+    |       module
+                module_1
                     +-- foo.js
-    |           _module_2
+    |           module_2
                     +-- bar.js
             +== index.js
 ```
