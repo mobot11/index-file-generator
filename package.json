@@ -1,0 +1,18 @@
+{
+  "name": "index-file-generator",
+  "version": "0.0.0",
+  "description": "A Node command line utility to programatically generate index files in your directories.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "command",
+    "line",
+    "index",
+    "file",
+    "system"
+  ],
+  "author": "Dylan Moberg",
+  "license": "MIT"
+}
