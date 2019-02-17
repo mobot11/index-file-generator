@@ -40,20 +40,25 @@ async function getDirectoryContent(dirPath) {
 
 async function generateIndexFiles(dir, root) {
     if (!dir) {
-        console.error(error(`the ${commandArgs('--directory')} command line argument is required when using ${commandArgs('generate-index-files')}.`));
+        console.error(
+            error(
+                `the ${commandArgs('--directory')} argument is required when using ${commandArgs(
+                    'generate-index-files',
+                )}.`,
+            ),
+        );
         return;
     }
     const dirPath = path.join(root.path, dir);
 
     try {
         const content = await getDirectoryContent(dirPath);
-        if (!Array.isArray(content) || content.length > 1) {
+        if (!Array.isArray(content) || content.length < 1) {
             console.error(error(`The directory ${filePath(dirPath)} is empty.`));
             return;
         }
         if (!args['--recursive']) {
             const fileContent = '';
-
             content.map(item => console.log(item));
         }
     } catch (e) {
