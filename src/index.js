@@ -1,17 +1,12 @@
 #!/usr/bin/env node
 
 import path from 'path';
-import fs from 'fs';
 import arg from 'arg';
-import { promisify } from 'util';
 import appRoot from 'app-root-path';
 
 import {
-    isDirectory,
+    isDirectory, readDirectory, error, filePath, commandArgs,
 } from './utils';
-
-const lstat = promisify(fs.lstat);
-const readdir = promisify(fs.readdir);
 
 const args = arg({
     '--directory': String,
@@ -25,14 +20,45 @@ const args = arg({
 const directory = args['--directory'];
 
 async function getDirectoryContent(dirPath) {
-    const isDir = await isDirectory(dirpath);
-
-    console.log(isDir);
+    try {
+        const isDir = await isDirectory(dirPath);
+        if (isDir) {
+            try {
+                const dirContents = await readDirectory(dirPath);
+                return dirContents;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    } catch (e) {
+        if (e.code === 'ENOENT') {
+            console.error(error(`The file or directory ${filePath(e.path)} does not exist.`));
+        }
+    }
+    return '';
 }
 
-const generateIndexFiles = (dir, root) => {
+async function generateIndexFiles(dir, root) {
+    if (!dir) {
+        console.error(error(`the ${commandArgs('--directory')} command line argument is required when using ${commandArgs('generate-index-files')}.`));
+        return;
+    }
     const dirPath = path.join(root.path, dir);
-    getDirectoryContent(dirPath);
-};
+
+    try {
+        const content = await getDirectoryContent(dirPath);
+        if (!Array.isArray(content) || content.length > 1) {
+            console.error(error(`The directory ${filePath(dirPath)} is empty.`));
+            return;
+        }
+        if (!args['--recursive']) {
+            const fileContent = '';
+
+            content.map(item => console.log(item));
+        }
+    } catch (e) {
+        console.error(error(e));
+    }
+}
 
 generateIndexFiles(directory, appRoot);
