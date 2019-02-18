@@ -5,7 +5,14 @@ import arg from 'arg';
 import appRoot from 'app-root-path';
 
 import {
-    isDirectory, readDirectory, error, filePath, commandArgs,
+    isDirectoryAsync,
+    isDirectory,
+    readDirectory,
+    error,
+    warning,
+    info,
+    filePath,
+    commandArgs,
 } from './utils';
 
 const args = arg({
@@ -21,7 +28,7 @@ const directory = args['--directory'];
 
 async function getDirectoryContent(dirPath) {
     try {
-        const isDir = await isDirectory(dirPath);
+        const isDir = await isDirectoryAsync(dirPath);
         if (isDir) {
             try {
                 const dirContents = await readDirectory(dirPath);
@@ -33,6 +40,8 @@ async function getDirectoryContent(dirPath) {
     } catch (e) {
         if (e.code === 'ENOENT') {
             console.error(error(`The file or directory ${filePath(e.path)} does not exist.`));
+        } else {
+            console.error(e);
         }
     }
     return '';
@@ -59,7 +68,33 @@ async function generateIndexFiles(dir, root) {
         }
         if (!args['--recursive']) {
             const fileContent = '';
-            content.map(item => console.log(item));
+            content.map((item) => {
+                if (!isDirectory(path.join(dirPath, item))) {
+                    const fileExports = require(path.join(dirPath, item));
+                    if (
+                        Object.entries(fileExports).length === 0
+                        && fileExports.constructor === Object
+                    ) {
+                        console.warn(
+                            warning(
+                                `The file ${filePath(
+                                    path.join(dirPath, item),
+                                )} contains no exports`,
+                            ),
+                        );
+                    }
+                    console.log(fileExports);
+                    if (!fileContent) {
+                        console.info(
+                            info(
+                                `No exports were found in ${filePath(
+                                    dirPath,
+                                )}, no import file was generated.`,
+                            ),
+                        );
+                    }
+                }
+            });
         }
     } catch (e) {
         console.error(error(e));

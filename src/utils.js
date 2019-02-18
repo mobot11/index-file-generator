@@ -11,9 +11,9 @@ const error = message => chalk`{red ERROR:} ${message}`;
 const filePath = message => chalk.green(`"${message}"`);
 const commandArgs = message => chalk.blue(message);
 
-function isDirectory(dirPath) {
+function isDirectoryAsync(source) {
     return new Promise((resolve, reject) => {
-        lstat(dirPath, false).then((stat) => {
+        lstat(source, false).then((stat) => {
             resolve(stat.isDirectory());
         }).catch((err) => {
             reject(err);
@@ -21,9 +21,13 @@ function isDirectory(dirPath) {
     });
 }
 
-function readDirectory(dirPath) {
+function isDirectory(source) {
+    return fs.lstatSync(source).isDirectory();
+}
+
+function readDirectory(source) {
     return new Promise((resolve, reject) => {
-        readdir(dirPath).then((dirContents) => {
+        readdir(source).then((dirContents) => {
             resolve(dirContents);
         }).catch((err) => {
             reject(err);
@@ -34,6 +38,7 @@ function readDirectory(dirPath) {
 // function readDirectory()
 
 export {
+    isDirectoryAsync,
     isDirectory,
     readDirectory,
     warning,

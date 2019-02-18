@@ -7,6 +7,10 @@
         "es6": true
     },
     "rules": {
-        "indent": [1, 4, {"SwitchCase": 1}]
+        "indent": [1, 4, {"SwitchCase": 1}],
+        "import/no-dynamic-require": [0],
+        "global-require": [0],
+        "array-callback-return": [0],
+        "no-console": [0]
     }
 }
