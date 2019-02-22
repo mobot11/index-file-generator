@@ -83,7 +83,6 @@ async function generateIndexFiles(dir, root) {
                             ),
                         );
                     }
-                    console.log(fileExports);
                     if (!fileContent) {
                         console.info(
                             info(
