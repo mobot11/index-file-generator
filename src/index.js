@@ -3,6 +3,7 @@
 import path from 'path';
 import arg from 'arg';
 import appRoot from 'app-root-path';
+import fs from 'fs';
 
 import {
     isDirectoryAsync,
@@ -67,7 +68,7 @@ async function generateIndexFiles(dir, root) {
             return;
         }
         if (!args['--recursive']) {
-            const fileContent = '';
+            let fileContent = '';
             content.map((item) => {
                 if (!isDirectory(path.join(dirPath, item))) {
                     const fileExports = require(path.join(dirPath, item));
@@ -83,17 +84,40 @@ async function generateIndexFiles(dir, root) {
                             ),
                         );
                     }
-                    if (!fileContent) {
+
+                    Object.keys(fileExports).map((fileExport) => {
+                        if (fileExport === 'default') {
+                            // eslint-disable-next-line
+                            fileContent += `export { default as ${fileExports.default.name ? fileExports.default.name : fileExports.default.__exportName} } from './${item}';\n`;
+                        } else {
+                            fileContent += `export { ${fileExport} } from './${item}';\n`;
+                        }
+                    });
+                }
+            });
+            if (!fileContent.length) {
+                console.info(
+                    info(
+                        `No exports were found in ${filePath(
+                            dirPath,
+                        )}, no import file was generated.`,
+                    ),
+                );
+            } else {
+                fs.writeFile(path.join(dirPath, 'index.js'), fileContent, 'utf8', (err) => {
+                    if (err) {
+                        throw err;
+                    } else {
                         console.info(
                             info(
-                                `No exports were found in ${filePath(
+                                `index.js file created in ${filePath(
                                     dirPath,
-                                )}, no import file was generated.`,
+                                )}.`,
                             ),
                         );
                     }
-                }
-            });
+                });
+            }
         }
     } catch (e) {
         console.error(error(e));
