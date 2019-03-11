@@ -21,7 +21,6 @@ const args = arg({
     '--generate-single': Boolean,
     '--generate-multiple': Boolean,
     '--ignore-path': String,
-    '--include-path': String,
     '--recursive': Boolean,
 });
 
@@ -70,8 +69,33 @@ async function generateIndexFiles(dir, root) {
         if (!args['--recursive']) {
             let fileContent = '';
             content.map((item) => {
-                if (!isDirectory(path.join(dirPath, item))) {
-                    const fileExports = require(path.join(dirPath, item));
+                const currPath = path.join(dirPath, item);
+
+                const ignorePath = args['--ignore-path'];
+                if (Array.isArray(ignorePath) && ignorePath.length > 0) {
+                    ignorePath.map((single) => {
+                        if (currPath.includes(single)) {
+                            console.info(
+                                info(
+                                    `Ignoring ${filePath(
+                                        dirPath,
+                                    )}`,
+                                ),
+                            );
+                        }
+                    });
+                } else if (typeof ignorePath === 'string' || ignorePath instanceof String) {
+                    if (currPath.includes(ignorePath)) {
+                        console.info(
+                            info(
+                                `Ignoring ${filePath(
+                                    dirPath,
+                                )}`,
+                            ),
+                        );
+                    }
+                } else if (!isDirectory(currPath)) {
+                    const fileExports = require(currPath);
                     if (
                         Object.entries(fileExports).length === 0
                         && fileExports.constructor === Object
@@ -79,7 +103,7 @@ async function generateIndexFiles(dir, root) {
                         console.warn(
                             warning(
                                 `The file ${filePath(
-                                    path.join(dirPath, item),
+                                    currPath,
                                 )} contains no exports`,
                             ),
                         );
