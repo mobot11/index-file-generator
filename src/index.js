@@ -111,10 +111,12 @@ async function generateIndexFiles(dir, root) {
                     }
 
                     Object.keys(fileExports).map((fileExport) => {
+                        console.log(fileExport);
                         const ignoreFile = args['--ignore-file'];
                         if (fileExport === 'default') {
                             // eslint-disable-next-line
                             fileContent += `export { default as ${fileExports.default.name ? fileExports.default.name : fileExports.default.__exportName} } from './${item}';\n`;
+                            return;
                         } if (Array.isArray(ignoreFile) && ignoreFile.length > 0) {
                             ignoreFile.map((single) => {
                                 if (item.includes(single)) {
