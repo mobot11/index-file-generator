@@ -14,6 +14,7 @@ import {
     info,
     filePath,
     commandArgs,
+    processExport,
 } from './utils';
 
 const args = arg({
@@ -109,39 +110,8 @@ async function generateIndexFiles(dir, root) {
                             ),
                         );
                     }
-
                     Object.keys(fileExports).map((fileExport) => {
-                        console.log(fileExport);
-                        const ignoreFile = args['--ignore-file'];
-                        if (fileExport === 'default') {
-                            // eslint-disable-next-line
-                            fileContent += `export { default as ${fileExports.default.name ? fileExports.default.name : fileExports.default.__exportName} } from './${item}';\n`;
-                            return;
-                        } if (Array.isArray(ignoreFile) && ignoreFile.length > 0) {
-                            ignoreFile.map((single) => {
-                                if (item.includes(single)) {
-                                    console.info(
-                                        info(
-                                            `Ignoring ${filePath(
-                                                item,
-                                            )}`,
-                                        ),
-                                    );
-                                }
-                            });
-                        } else if (typeof ignorePath === 'string' || ignorePath instanceof String) {
-                            if (item.includes(ignorePath)) {
-                                console.info(
-                                    info(
-                                        `Ignoring ${filePath(
-                                            item,
-                                        )}`,
-                                    ),
-                                );
-                            }
-                        } else if (item !== 'index.js') {
-                            fileContent += `export { ${fileExport} } from './${item}';\n`;
-                        }
+                        fileContent += processExport(fileExport, args, item, ignorePath);
                     });
                 }
             });
